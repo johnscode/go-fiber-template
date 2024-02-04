@@ -4,4 +4,3 @@
 /.idea/vcs.xml
 /.idea/workspace.xml
 /bin/go_build_server_go
-/.env
