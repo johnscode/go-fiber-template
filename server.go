@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/caarlos0/env/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/template/handlebars/v2"
 	"github.com/rs/zerolog"
 	"log"
 	"os"
@@ -25,10 +26,22 @@ func main() {
 	}
 	logger := setupLogger(context.Background(), filepath.Join(cfg.LogDir, "server.log"))
 
-	server := fiber.New()
+	engine := handlebars.New("./views", ".hbs")
+	server := fiber.New(fiber.Config{
+		Views: engine,
+	})
 
 	server.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("It is alive!")
+		return c.Render("index", fiber.Map{
+			"Title":   "Fiber Template",
+			"Message": "Your page content",
+		})
+	})
+	server.Get("/layout", func(c *fiber.Ctx) error {
+		return c.Render("index", fiber.Map{
+			"Title":   "Fiber Template",
+			"Message": "Your page content",
+		}, "layouts/main")
 	})
 
 	addrStr := fmt.Sprintf(":%d", cfg.Port)
